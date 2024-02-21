@@ -9,7 +9,12 @@ import 'package:permission_handler/permission_handler.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp();
+  await Firebase.initializeApp(
+      options: const FirebaseOptions(
+          apiKey: 'AIzaSyC4ihA7tuOtxvLiyXycT26zN3OkH6frbIo',
+          appId: '1:992856790083:android:2427977d451fbffdd7f0f6',
+          messagingSenderId: '992856790083',
+          projectId: 'tracking-live-d14c1'));
   runApp(MaterialApp(home: MyApp()));
 }
 
@@ -26,14 +31,13 @@ class _MyAppState extends State<MyApp> {
   void initState() {
     super.initState();
     _requestPermission();
-    // location.changeSettings(interval: 300, accuracy: loc.LocationAccuracy.high);
-    // location.enableBackgroundMode(enable: true);
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: Colors.green,
         title: Text('live location tracker'),
       ),
       body: Column(
@@ -98,10 +102,10 @@ class _MyAppState extends State<MyApp> {
   _getLocation() async {
     try {
       final loc.LocationData _locationResult = await location.getLocation();
-      await FirebaseFirestore.instance.collection('location').doc('user1').set({
+      await FirebaseFirestore.instance.collection('location').doc('user2').set({
         'latitude': _locationResult.latitude,
         'longitude': _locationResult.longitude,
-        'name': 'john'
+        'name': 'ucok'
       }, SetOptions(merge: true));
     } catch (e) {
       print(e);
@@ -116,10 +120,10 @@ class _MyAppState extends State<MyApp> {
         _locationSubscription = null;
       });
     }).listen((loc.LocationData currentlocation) async {
-      await FirebaseFirestore.instance.collection('location').doc('user1').set({
+      await FirebaseFirestore.instance.collection('location').doc('user2').set({
         'latitude': currentlocation.latitude,
         'longitude': currentlocation.longitude,
-        'name': 'john'
+        'name': 'ucok'
       }, SetOptions(merge: true));
     });
   }
@@ -135,6 +139,9 @@ class _MyAppState extends State<MyApp> {
     var status = await Permission.location.request();
     if (status.isGranted) {
       print('done');
+      location.changeSettings(
+          interval: 300, accuracy: loc.LocationAccuracy.high);
+      location.enableBackgroundMode(enable: true);
     } else if (status.isDenied) {
       _requestPermission();
     } else if (status.isPermanentlyDenied) {
