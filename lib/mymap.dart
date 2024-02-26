@@ -16,36 +16,100 @@ class _MyMapState extends State<MyMap> {
   late GoogleMapController _controller;
   bool _added = false;
 
-  static const LatLng from = LatLng(37.33500926, -122.03272188);
-  static const LatLng to = LatLng(37.33429383, -122.06600055);
+  static const LatLng from = LatLng(1.0374038854285719, 104.05531512880482);
+  //1.0374038854285719, 104.05531512880482 salon depi
+  static const LatLng to = LatLng(1.140088222477418, 104.01864322505489);
+  //1.140088222477418, 104.01864322505489 satnusa
+
+  PolylineResult? dataTracking = null;
 
   List<LatLng> polyLinePath = [];
   getPolyLine() async {
     PolylinePoints polylinePoints = PolylinePoints();
     PolylineResult result = await polylinePoints.getRouteBetweenCoordinates(
-        'AIzaSyBMUJHlOIhv12hVN2W9yTQWWRuJaHe0nqw',
+        'AIzaSyC6LgH8lt4IILgH2KaM-Nk9V2jcpomkiu4',
+        // punya galih AIzaSyC6LgH8lt4IILgH2KaM-Nk9V2jcpomkiu4
         PointLatLng(from.latitude, from.longitude),
         PointLatLng(to.latitude, to.longitude));
+
     if (result.points.isNotEmpty) {
       result.points.forEach((PointLatLng point) {
         polyLinePath.add(LatLng(point.latitude, point.longitude));
       });
     }
+    dataTracking = result;
+    setState(() {});
   }
 
   @override
   void initState() {
-    // getPolyLine();
+    getPolyLine();
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      floatingActionButton: FloatingActionButton(
+        child: Icon(Icons.not_listed_location_sharp),
+        onPressed: () {
+          showModalBottomSheet(
+            showDragHandle: true,
+            backgroundColor: Colors.white,
+            isScrollControlled: true,
+            shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.vertical(top: Radius.circular(32))),
+            context: context,
+            builder: (context) {
+              return Padding(
+                padding: EdgeInsets.symmetric(vertical: 12, horizontal: 24),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    listDetail(
+                        icon: Icon(
+                          Icons.timer_sharp,
+                          color: Colors.blue,
+                        ),
+                        title: "Duration",
+                        descp: "${dataTracking!.duration ?? "-"}"),
+                    SizedBox(height: 10),
+                    listDetail(
+                        icon: Icon(
+                          Icons.straighten_rounded,
+                          color: Colors.purple,
+                        ),
+                        title: "Distance",
+                        descp: "${dataTracking!.distance ?? "-"}"),
+                    SizedBox(height: 10),
+                    listDetail(
+                        icon: Icon(
+                          Icons.home_outlined,
+                          color: Colors.green,
+                        ),
+                        title: "Start",
+                        descp: "${dataTracking?.startAddress ?? "-"}"),
+                    SizedBox(height: 10),
+                    listDetail(
+                        icon: Icon(
+                          Icons.home_work_outlined,
+                          color: Colors.pink,
+                        ),
+                        title: "End",
+                        descp: "${dataTracking?.endAddress ?? "-"}"),
+                    SizedBox(height: 10),
+                  ],
+                ),
+              );
+            },
+          );
+        },
+      ),
       body: GoogleMap(
         mapType: MapType.normal,
-        compassEnabled: 
-        true,
+        compassEnabled: true,
         zoomControlsEnabled: false,
         markers: {
           // Marker(
@@ -58,13 +122,17 @@ class _MyMapState extends State<MyMap> {
           //     markerId: MarkerId('id'),
           //     icon: BitmapDescriptor.defaultMarkerWithHue(
           //         BitmapDescriptor.hueMagenta)),
+
           Marker(
+            flat: true,
+            infoWindow: InfoWindow(title: "Salon Mudi Suwarno"),
             position: from,
             markerId: MarkerId('from'),
             icon:
                 BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueRed),
           ),
           Marker(
+            infoWindow: InfoWindow(title: "PT. Satnusa"),
             position: to,
             markerId: MarkerId('to'),
             icon:
@@ -88,7 +156,7 @@ class _MyMapState extends State<MyMap> {
             //   snapshot.data!.docs.singleWhere(
             //       (element) => element.id == widget.user_id)['longitude'],
             // ),
-            zoom: 13.5),
+            zoom: 15),
         // onMapCreated: (GoogleMapController controller) async {
         //   setState(() {
         //     _controller = controller;
@@ -160,6 +228,25 @@ class _MyMapState extends State<MyMap> {
       //     );
       //   },
       // ),
+    );
+  }
+
+  Row listDetail(
+      {required Icon icon, required String title, required String descp}) {
+    return Row(
+      children: [
+        icon,
+        SizedBox(width: 10),
+        Flexible(fit: FlexFit.tight, flex: 1, child: Text(title)),
+        SizedBox(width: 12),
+        Flexible(
+            fit: FlexFit.tight,
+            flex: 4,
+            child: Text(
+              descp,
+              style: TextStyle(fontSize: 15, fontWeight: FontWeight.w500),
+            )),
+      ],
     );
   }
 
