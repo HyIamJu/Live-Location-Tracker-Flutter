@@ -27,8 +27,8 @@ class _MyMapState extends State<MyMap> {
   getPolyLine() async {
     PolylinePoints polylinePoints = PolylinePoints();
     PolylineResult result = await polylinePoints.getRouteBetweenCoordinates(
-        'AIzaSyC6LgH8lt4IILgH2KaM-Nk9V2jcpomkiu4',
-        // punya galih AIzaSyC6LgH8lt4IILgH2KaM-Nk9V2jcpomkiu4
+      /// TODO api key input
+      'APIKEY',
         PointLatLng(from.latitude, from.longitude),
         PointLatLng(to.latitude, to.longitude));
 

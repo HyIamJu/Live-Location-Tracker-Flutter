@@ -13,9 +13,9 @@
         android:label="google_map_live"
         android:icon="@mipmap/ic_launcher">
 
-        <!-- added api key -->
+        <!-- added api key   /// TODO api key input-->
             <meta-data android:name="com.google.android.geo.API_KEY"
-               android:value="AIzaSyC6LgH8lt4IILgH2KaM-Nk9V2jcpomkiu4"/>
+               android:value="API KEy"/>
 
 
         <activity
